@@ -2,4 +2,7 @@ parameters:
     ignoreErrors:
         -
             identifier: missingType.iterableValue
+        # Glue framework annotation parsing
+        -
+            identifier: phpDoc.parseError
     level: 8
