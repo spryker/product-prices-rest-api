@@ -76,14 +76,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
      */
     protected PriceProductFilterTransferBuilderInterface $priceProductFilterTransferBuilder;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToProductStorageClientInterface $productStorageClient
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceProductStorageClientInterface $priceProductStorageClient
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceProductClientInterface $priceProductClient
-     * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface $restResourceBuilder
-     * @param \Spryker\Glue\ProductPricesRestApi\Processor\Mapper\ProductPricesMapperInterface $productPricesMapper
-     * @param \Spryker\Glue\ProductPricesRestApi\Processor\Builder\PriceProductFilterTransferBuilderInterface $priceProductFilterTransferBuilder
-     */
     public function __construct(
         ProductPricesRestApiToProductStorageClientInterface $productStorageClient,
         ProductPricesRestApiToPriceProductStorageClientInterface $priceProductStorageClient,
@@ -100,11 +92,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
         $this->priceProductFilterTransferBuilder = $priceProductFilterTransferBuilder;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function findConcreteProductPrices(RestRequestInterface $restRequest): RestResponseInterface
     {
         $restResponse = $this->restResourceBuilder->createRestResponse();
@@ -125,12 +112,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
         return $restResponse->addResource($restResource);
     }
 
-    /**
-     * @param string $sku
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface|null
-     */
     public function findConcreteProductPricesBySku(string $sku, RestRequestInterface $restRequest): ?RestResourceInterface
     {
         $concreteProductData = $this->productStorageClient
@@ -166,12 +147,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
         return $this->buildProductPricesResource($sku, $restProductPricesAttributesTransfer);
     }
 
-    /**
-     * @param string $sku
-     * @param \Generated\Shared\Transfer\RestProductPricesAttributesTransfer $restProductPricesAttributesTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface|null
-     */
     protected function buildProductPricesResource(string $sku, RestProductPricesAttributesTransfer $restProductPricesAttributesTransfer): ?RestResourceInterface
     {
         $restResource = $this->restResourceBuilder->createRestResource(
@@ -191,9 +166,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
         return $restResource;
     }
 
-    /**
-     * @return \Generated\Shared\Transfer\RestErrorMessageTransfer
-     */
     protected function createConcreteProductSkuIsNotSpecifiedError(): RestErrorMessageTransfer
     {
         $restErrorTransfer = (new RestErrorMessageTransfer())
@@ -204,9 +176,6 @@ class ConcreteProductPricesReader implements ConcreteProductPricesReaderInterfac
         return $restErrorTransfer;
     }
 
-    /**
-     * @return \Generated\Shared\Transfer\RestErrorMessageTransfer
-     */
     protected function createConcreteProductPricesNotFoundError(): RestErrorMessageTransfer
     {
         $restErrorTransfer = (new RestErrorMessageTransfer())

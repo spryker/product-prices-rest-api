@@ -26,10 +26,6 @@ class AbstractProductPricesRelationshipExpander implements AbstractProductPrices
      */
     protected $productPricesRestApiConfig;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Processor\AbstractProductPrices\AbstractProductPricesReaderInterface $abstractProductPricesReader
-     * @param \Spryker\Glue\ProductPricesRestApi\ProductPricesRestApiConfig $productPricesRestApiConfig
-     */
     public function __construct(
         AbstractProductPricesReaderInterface $abstractProductPricesReader,
         ProductPricesRestApiConfig $productPricesRestApiConfig

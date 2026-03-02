@@ -21,19 +21,11 @@ class PriceModeValidator implements PriceModeValidatorInterface
      */
     protected $priceClient;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceClientInterface $priceClient
-     */
     public function __construct(ProductPricesRestApiToPriceClientInterface $priceClient)
     {
         $this->priceClient = $priceClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\RestErrorCollectionTransfer|null
-     */
     public function validate(RestRequestInterface $restRequest): ?RestErrorCollectionTransfer
     {
         $priceMode = $this->getRequestParameter($restRequest, ProductPricesRestApiConfig::REQUEST_PARAMETER_PRICE_MODE);
@@ -54,12 +46,6 @@ class PriceModeValidator implements PriceModeValidatorInterface
         );
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param string $parameterName
-     *
-     * @return string
-     */
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): string
     {
         /** @var string $response */

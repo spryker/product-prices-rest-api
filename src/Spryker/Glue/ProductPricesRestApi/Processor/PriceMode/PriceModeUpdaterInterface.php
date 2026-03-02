@@ -11,10 +11,5 @@ use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 
 interface PriceModeUpdaterInterface
 {
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return void
-     */
     public function switchPriceMode(RestRequestInterface $restRequest): void;
 }

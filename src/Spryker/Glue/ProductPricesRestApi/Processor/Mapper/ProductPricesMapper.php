@@ -56,11 +56,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         $this->restProductPricesAttributesMapperPlugins = $restProductPricesAttributesMapperPlugins;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CurrentProductPriceTransfer $currentProductPriceTransfer
-     *
-     * @return \Generated\Shared\Transfer\RestProductPricesAttributesTransfer
-     */
     public function mapCurrentProductPriceTransferToRestProductPricesAttributesTransfer(
         CurrentProductPriceTransfer $currentProductPriceTransfer
     ): RestProductPricesAttributesTransfer {
@@ -80,12 +75,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return $productPricesRestAttributesTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\WishlistItemTransfer $wishlistItemTransfer
-     * @param \Generated\Shared\Transfer\RestWishlistItemsAttributesTransfer $restWishlistItemsAttributesTransfer
-     *
-     * @return \Generated\Shared\Transfer\RestWishlistItemsAttributesTransfer
-     */
     public function mapWishlistItemTransferPricesToRestWishlistItemsAttributesTransfer(
         WishlistItemTransfer $wishlistItemTransfer,
         RestWishlistItemsAttributesTransfer $restWishlistItemsAttributesTransfer
@@ -111,13 +100,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return $restWishlistItemsAttributesTransfer->setPrices($restPriceProductTransfers);
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CurrentProductPriceTransfer $currentProductPriceTransfer
-     * @param string $priceType
-     * @param int $amount
-     *
-     * @return \Generated\Shared\Transfer\RestProductPriceAttributesTransfer
-     */
     protected function getRestProductPriceAttributesTransfer(
         CurrentProductPriceTransfer $currentProductPriceTransfer,
         string $priceType,
@@ -145,12 +127,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return $restProductPriceAttributesTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CurrentProductPriceTransfer $currentProductPriceTransfer
-     * @param \Generated\Shared\Transfer\RestProductPriceAttributesTransfer $restProductPriceAttributesTransfer
-     *
-     * @return \Generated\Shared\Transfer\RestProductPriceAttributesTransfer
-     */
     public function executeRestProductPriceAttributesMapperPlugins(
         CurrentProductPriceTransfer $currentProductPriceTransfer,
         RestProductPriceAttributesTransfer $restProductPriceAttributesTransfer
@@ -165,9 +141,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return $restProductPriceAttributesTransfer;
     }
 
-    /**
-     * @return string
-     */
     protected function getCurrentPriceMode(): string
     {
         if (!static::$currentPriceMode) {
@@ -177,9 +150,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return static::$currentPriceMode;
     }
 
-    /**
-     * @return string
-     */
     protected function getGrossPriceModeIdentifier(): string
     {
         if (static::$grossPriceModeIdentifier === null) {
@@ -189,9 +159,6 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         return static::$grossPriceModeIdentifier;
     }
 
-    /**
-     * @return string
-     */
     protected function getNetPriceModeIdentifier(): string
     {
         if (static::$netPriceModeIdentifier === null) {

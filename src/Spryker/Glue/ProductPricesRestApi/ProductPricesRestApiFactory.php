@@ -40,9 +40,6 @@ use Spryker\Glue\ProductPricesRestApi\Processor\PriceMode\PriceModeValidatorInte
  */
 class ProductPricesRestApiFactory extends AbstractFactory
 {
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\Mapper\ProductPricesMapperInterface
-     */
     public function createProductPricesMapper(): ProductPricesMapperInterface
     {
         return new ProductPricesMapper(
@@ -51,9 +48,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\AbstractProductPrices\AbstractProductPricesReaderInterface
-     */
     public function createAbstractProductPricesReader(): AbstractProductPricesReaderInterface
     {
         return new AbstractProductPricesReader(
@@ -66,9 +60,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\ConcreteProductPrices\ConcreteProductPricesReaderInterface
-     */
     public function createConcreteProductPricesReader(): ConcreteProductPricesReaderInterface
     {
         return new ConcreteProductPricesReader(
@@ -81,9 +72,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\Builder\PriceProductFilterTransferBuilderInterface
-     */
     public function createPriceProductFilterTransferBuilder(): PriceProductFilterTransferBuilderInterface
     {
         return new PriceProductFilterTransferBuilder(
@@ -91,9 +79,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\Currency\CurrencyValidatorInterface
-     */
     public function createCurrencyValidator(): CurrencyValidatorInterface
     {
         return new CurrencyValidator(
@@ -102,9 +87,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\PriceMode\PriceModeValidatorInterface
-     */
     public function createPriceModeValidator(): PriceModeValidatorInterface
     {
         return new PriceModeValidator($this->getPriceClient());
@@ -120,17 +102,11 @@ class ProductPricesRestApiFactory extends AbstractFactory
         return new CurrencyUpdater($this->getCurrencyClient());
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\PriceMode\PriceModeUpdaterInterface
-     */
     public function createPriceModeUpdater(): PriceModeUpdaterInterface
     {
         return new PriceModeUpdater($this->getPriceClient());
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\Expander\AbstractProductPricesRelationshipExpanderInterface
-     */
     public function createAbstractProductPricesRelationshipExpander(): AbstractProductPricesRelationshipExpanderInterface
     {
         return new AbstractProductPricesRelationshipExpander(
@@ -139,9 +115,6 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Processor\Expander\ConcreteProductPricesRelationshipExpanderInterface
-     */
     public function createConcreteProductPricesRelationshipExpander(): ConcreteProductPricesRelationshipExpanderInterface
     {
         return new ConcreteProductPricesRelationshipExpander(
@@ -150,49 +123,31 @@ class ProductPricesRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceProductStorageClientInterface
-     */
     public function getPriceProductStorageClient(): ProductPricesRestApiToPriceProductStorageClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_PRICE_PRODUCT_STORAGE);
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToProductStorageClientInterface
-     */
     public function getProductStorageClient(): ProductPricesRestApiToProductStorageClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_PRODUCT_STORAGE);
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceProductClientInterface
-     */
     public function getPriceProductClient(): ProductPricesRestApiToPriceProductClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_PRICE_PRODUCT);
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceClientInterface
-     */
     public function getPriceClient(): ProductPricesRestApiToPriceClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_PRICE);
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToCurrencyClientInterface
-     */
     public function getCurrencyClient(): ProductPricesRestApiToCurrencyClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_CURRENCY);
     }
 
-    /**
-     * @return \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToStoreClientInterface
-     */
     public function getStoreClient(): ProductPricesRestApiToStoreClientInterface
     {
         return $this->getProvidedDependency(ProductPricesRestApiDependencyProvider::CLIENT_STORE);

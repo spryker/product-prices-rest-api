@@ -27,10 +27,6 @@ class CurrencyValidator implements CurrencyValidatorInterface
      */
     protected $storeClient;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToCurrencyClientInterface $currencyClient
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToStoreClientInterface $storeClient
-     */
     public function __construct(
         ProductPricesRestApiToCurrencyClientInterface $currencyClient,
         ProductPricesRestApiToStoreClientInterface $storeClient
@@ -39,11 +35,6 @@ class CurrencyValidator implements CurrencyValidatorInterface
         $this->storeClient = $storeClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\RestErrorCollectionTransfer|null
-     */
     public function validate(RestRequestInterface $restRequest): ?RestErrorCollectionTransfer
     {
         $currencyIsoCode = $this->getRequestParameter($restRequest, ProductPricesRestApiConfig::REQUEST_PARAMETER_CURRENCY);
@@ -66,12 +57,6 @@ class CurrencyValidator implements CurrencyValidatorInterface
         );
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param string $parameterName
-     *
-     * @return string
-     */
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): string
     {
         /** @var string $response */

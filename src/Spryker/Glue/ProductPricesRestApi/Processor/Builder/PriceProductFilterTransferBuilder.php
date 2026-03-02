@@ -19,19 +19,11 @@ class PriceProductFilterTransferBuilder implements PriceProductFilterTransferBui
   */
     protected ProductPricesRestApiToCurrencyClientInterface $currencyClient;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToCurrencyClientInterface $currencyClient
-     */
     public function __construct(ProductPricesRestApiToCurrencyClientInterface $currencyClient)
     {
         $this->currencyClient = $currencyClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\PriceProductFilterTransfer
-     */
     public function build(RestRequestInterface $restRequest): PriceProductFilterTransfer
     {
         $priceProductFilterTransfer = (new PriceProductFilterTransfer());
@@ -50,12 +42,6 @@ class PriceProductFilterTransferBuilder implements PriceProductFilterTransferBui
         return $priceProductFilterTransfer;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param string $parameterName
-     *
-     * @return string|null
-     */
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): ?string
     {
         /**
@@ -66,11 +52,6 @@ class PriceProductFilterTransferBuilder implements PriceProductFilterTransferBui
         return $value;
     }
 
-    /**
-     * @param string $currencyIsoCode
-     *
-     * @return bool
-     */
     protected function isValidCurrencyIsoCode(string $currencyIsoCode): bool
     {
         return in_array($currencyIsoCode, $this->currencyClient->getCurrencyIsoCodes());

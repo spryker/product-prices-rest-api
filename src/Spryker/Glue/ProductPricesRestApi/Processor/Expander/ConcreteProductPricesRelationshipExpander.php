@@ -26,10 +26,6 @@ class ConcreteProductPricesRelationshipExpander implements ConcreteProductPrices
      */
     protected $productPricesRestApiConfig;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Processor\ConcreteProductPrices\ConcreteProductPricesReaderInterface $concreteProductPricesReader
-     * @param \Spryker\Glue\ProductPricesRestApi\ProductPricesRestApiConfig $productPricesRestApiConfig
-     */
     public function __construct(
         ConcreteProductPricesReaderInterface $concreteProductPricesReader,
         ProductPricesRestApiConfig $productPricesRestApiConfig

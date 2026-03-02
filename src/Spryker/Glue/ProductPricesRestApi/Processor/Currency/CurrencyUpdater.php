@@ -21,19 +21,11 @@ class CurrencyUpdater implements CurrencyUpdaterInterface
      */
     protected $currencyClient;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToCurrencyClientInterface $currencyClient
-     */
     public function __construct(ProductPricesRestApiToCurrencyClientInterface $currencyClient)
     {
         $this->currencyClient = $currencyClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return void
-     */
     public function setCurrentCurrency(RestRequestInterface $restRequest): void
     {
         $currencyIsoCode = $this->getRequestParameter($restRequest, ProductPricesRestApiConfig::REQUEST_PARAMETER_CURRENCY);
@@ -42,12 +34,6 @@ class CurrencyUpdater implements CurrencyUpdaterInterface
         }
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param string $parameterName
-     *
-     * @return string
-     */
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): string
     {
         /** @var string $response */

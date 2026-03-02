@@ -22,35 +22,21 @@ class ProductPricesRestApiToPriceClientBridge implements ProductPricesRestApiToP
         $this->priceClient = $priceClient;
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentPriceMode(): string
     {
         return $this->priceClient->getCurrentPriceMode();
     }
 
-    /**
-     * @return string
-     */
     public function getGrossPriceModeIdentifier(): string
     {
         return $this->priceClient->getGrossPriceModeIdentifier();
     }
 
-    /**
-     * @return string
-     */
     public function getNetPriceModeIdentifier(): string
     {
         return $this->priceClient->getNetPriceModeIdentifier();
     }
 
-    /**
-     * @param string $priceMode
-     *
-     * @return void
-     */
     public function switchPriceMode(string $priceMode): void
     {
         $this->priceClient->switchPriceMode($priceMode);

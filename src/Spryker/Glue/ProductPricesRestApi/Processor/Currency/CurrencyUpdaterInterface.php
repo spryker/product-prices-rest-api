@@ -14,10 +14,5 @@ use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
  */
 interface CurrencyUpdaterInterface
 {
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return void
-     */
     public function setCurrentCurrency(RestRequestInterface $restRequest): void;
 }

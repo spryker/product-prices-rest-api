@@ -32,21 +32,11 @@ class ProductPricesRestApiToCurrencyClientBridge implements ProductPricesRestApi
         return $this->currencyClient->getCurrent();
     }
 
-    /**
-     * @param string $currencyIsoCode
-     *
-     * @return void
-     */
     public function setCurrentCurrencyIsoCode(string $currencyIsoCode): void
     {
         $this->currencyClient->setCurrentCurrencyIsoCode($currencyIsoCode);
     }
 
-    /**
-     * @param string $isoCode
-     *
-     * @return \Generated\Shared\Transfer\CurrencyTransfer
-     */
     public function fromIsoCode(string $isoCode): CurrencyTransfer
     {
         return $this->currencyClient->fromIsoCode($isoCode);

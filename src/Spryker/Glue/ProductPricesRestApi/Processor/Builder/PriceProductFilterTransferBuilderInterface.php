@@ -12,10 +12,5 @@ use Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface;
 
 interface PriceProductFilterTransferBuilderInterface
 {
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\PriceProductFilterTransfer
-     */
     public function build(RestRequestInterface $restRequest): PriceProductFilterTransfer;
 }

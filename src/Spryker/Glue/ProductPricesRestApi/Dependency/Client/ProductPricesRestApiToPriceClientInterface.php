@@ -24,11 +24,6 @@ interface ProductPricesRestApiToPriceClientInterface
      */
     public function getNetPriceModeIdentifier();
 
-    /**
-     * @param string $priceMode
-     *
-     * @return void
-     */
     public function switchPriceMode(string $priceMode): void;
 
     /**

@@ -18,19 +18,11 @@ class PriceModeUpdater implements PriceModeUpdaterInterface
      */
     protected $priceClient;
 
-    /**
-     * @param \Spryker\Glue\ProductPricesRestApi\Dependency\Client\ProductPricesRestApiToPriceClientInterface $priceClient
-     */
     public function __construct(ProductPricesRestApiToPriceClientInterface $priceClient)
     {
         $this->priceClient = $priceClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return void
-     */
     public function switchPriceMode(RestRequestInterface $restRequest): void
     {
         $priceMode = $this->getRequestParameter($restRequest, ProductPricesRestApiConfig::REQUEST_PARAMETER_PRICE_MODE);
@@ -39,12 +31,6 @@ class PriceModeUpdater implements PriceModeUpdaterInterface
         }
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param string $parameterName
-     *
-     * @return string
-     */
     protected function getRequestParameter(RestRequestInterface $restRequest, string $parameterName): string
     {
         /** @var string $response */
