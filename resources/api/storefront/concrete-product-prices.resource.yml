@@ -1,0 +1,65 @@
+resource:
+    name: ConcreteProductPrices
+    shortName: concrete-product-prices
+    description: 'Storefront prices for concrete products'
+
+    provider: Spryker\Glue\ProductPricesRestApi\Api\Storefront\Provider\ConcreteProductPricesStorefrontProvider
+
+    paginationEnabled: false
+
+    operations:
+        - type: GetCollection
+          name: getConcreteProductPricesByProductConcreteSku
+          uriTemplate: /concrete-products/{concreteProductSku}/concrete-product-prices
+          description: 'Retrieve prices of a concrete product'
+          uriVariables:
+              concreteProductSku:
+                  fromClass: ConcreteProductPricesStorefrontResource
+                  identifiers:
+                      - concreteProductSku
+
+        - type: GetCollection
+          name: getConcreteProductPricesFallbackMissingSku
+          uriTemplate: '/concrete-products/concrete-product-prices'
+          description: 'Backward compatibility — returns 400 when concrete product SKU is missing'
+
+    includableIn:
+        - resource: ConcreteProducts
+          relationshipName: concrete-product-prices
+          uriVariableMappings:
+              sku: concreteProductSku
+
+    properties:
+        concreteProductSku:
+            type: string
+            identifier: true
+            writable: false
+            readable: true
+            description: 'SKU of the parent concrete product'
+            openapiContext:
+                example: '001_25904006'
+
+        price:
+            type: integer
+            writable: false
+            readable: true
+            required: false
+            description: 'Default (current) price in cents'
+            openapiContext:
+                example: 12900
+
+        prices:
+            type: array
+            writable: false
+            readable: true
+            required: false
+            description: 'Collection of prices by type and currency'
+            openapiContext:
+                example:
+                    - priceTypeName: 'DEFAULT'
+                      netAmount: null
+                      grossAmount: 12900
+                      currency:
+                          code: 'EUR'
+                          name: 'Euro'
+                          symbol: '€'

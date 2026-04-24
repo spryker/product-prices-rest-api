@@ -44,6 +44,13 @@
     </transfer>
 
     <transfer name="Currency">
+        <property name="code" type="string" description="A unique code, often for currency, country, or barcode."/>
+        <property name="name" type="string" description="The name of an entity (e.g., user, category, product, role)."/>
+        <property name="symbol" type="string" description="The symbol for a currency (e.g., '$', '&#x20AC;')."/>
+    </transfer>
+
+    <transfer name="Locale">
+        <property name="localeName" type="string" description="The name of a locale, such as 'en_US' or 'de_DE'."/>
     </transfer>
 
     <transfer name="WishlistItem">

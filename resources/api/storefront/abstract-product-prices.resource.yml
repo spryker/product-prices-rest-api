@@ -1,0 +1,65 @@
+resource:
+    name: AbstractProductPrices
+    shortName: abstract-product-prices
+    description: 'Storefront prices for abstract products'
+
+    provider: Spryker\Glue\ProductPricesRestApi\Api\Storefront\Provider\AbstractProductPricesStorefrontProvider
+
+    paginationEnabled: false
+
+    operations:
+        - type: GetCollection
+          name: getAbstractProductPricesByProductAbstractSku
+          uriTemplate: /abstract-products/{abstractProductSku}/abstract-product-prices
+          description: 'Retrieve prices of an abstract product'
+          uriVariables:
+              abstractProductSku:
+                  fromClass: AbstractProductPricesStorefrontResource
+                  identifiers:
+                      - abstractProductSku
+
+        - type: GetCollection
+          name: getAbstractProductPricesFallbackMissingSku
+          uriTemplate: '/abstract-products/abstract-product-prices'
+          description: 'Backward compatibility — returns 400 when abstract product SKU is missing'
+
+    includableIn:
+        - resource: AbstractProducts
+          relationshipName: abstract-product-prices
+          uriVariableMappings:
+              sku: abstractProductSku
+
+    properties:
+        abstractProductSku:
+            type: string
+            identifier: true
+            writable: false
+            readable: true
+            description: 'SKU of the parent abstract product'
+            openapiContext:
+                example: '001'
+
+        price:
+            type: integer
+            writable: false
+            readable: true
+            required: false
+            description: 'Default (current) price in cents'
+            openapiContext:
+                example: 12900
+
+        prices:
+            type: array
+            writable: false
+            readable: true
+            required: false
+            description: 'Collection of prices by type and currency'
+            openapiContext:
+                example:
+                    - priceTypeName: 'DEFAULT'
+                      netAmount: null
+                      grossAmount: 12900
+                      currency:
+                          code: 'EUR'
+                          name: 'Euro'
+                          symbol: '€'
