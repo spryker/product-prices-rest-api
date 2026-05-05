@@ -13,16 +13,16 @@ use Generated\Api\Storefront\ConcreteProductPricesStorefrontResource;
 use Generated\Shared\Transfer\CurrentProductPriceTransfer;
 use Generated\Shared\Transfer\PriceProductFilterTransfer;
 use Generated\Shared\Transfer\PriceProductResolveConditionsTransfer;
-use Spryker\ApiPlatform\Exception\GlueApiException;
+use Generated\Shared\Transfer\RestCurrencyTransfer;
+use Generated\Shared\Transfer\RestProductPriceAttributesTransfer;
 use Spryker\ApiPlatform\State\Provider\AbstractStorefrontProvider;
 use Spryker\Client\Currency\CurrencyClientInterface;
 use Spryker\Client\Price\PriceClientInterface;
 use Spryker\Client\PriceProduct\PriceProductClientInterface;
 use Spryker\Client\PriceProductStorage\PriceProductStorageClientInterface;
 use Spryker\Client\ProductStorage\ProductStorageClientInterface;
-use Spryker\Glue\ProductPricesRestApi\ProductPricesRestApiConfig;
-use Spryker\Glue\ProductsRestApi\ProductsRestApiConfig;
-use Symfony\Component\HttpFoundation\Response;
+use Spryker\Glue\ProductPricesRestApi\Api\Storefront\Exception\ProductPricesExceptionFactory;
+use Spryker\Service\Container\Attributes\Plugins;
 
 class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
 {
@@ -34,12 +34,20 @@ class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
 
     protected const string URI_VAR_SKU = 'concreteProductSku';
 
+    protected const string QUERY_PARAM_CURRENCY = 'currency';
+
+    /**
+     * @param array<\Spryker\Glue\ProductPricesRestApiExtension\Dependency\Plugin\RestProductPricesAttributesMapperPluginInterface> $restProductPricesAttributesMapperPlugins
+     */
     public function __construct(
         protected ProductStorageClientInterface $productStorageClient,
         protected PriceProductStorageClientInterface $priceProductStorageClient,
         protected PriceProductClientInterface $priceProductClient,
         protected PriceClientInterface $priceClient,
         protected CurrencyClientInterface $currencyClient,
+        protected ProductPricesExceptionFactory $exceptionFactory = new ProductPricesExceptionFactory(),
+        #[Plugins(dependencyProviderMethod: 'getRestProductPricesAttributesMapperPlugins')]
+        protected array $restProductPricesAttributesMapperPlugins = [],
     ) {
     }
 
@@ -60,11 +68,7 @@ class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
         );
 
         if ($productConcreteData === null) {
-            throw new GlueApiException(
-                Response::HTTP_NOT_FOUND,
-                ProductPricesRestApiConfig::RESPONSE_CODE_CONCRETE_PRODUCT_PRICES_NOT_FOUND,
-                ProductPricesRestApiConfig::RESPONSE_DETAILS_CONCRETE_PRODUCT_PRICES_NOT_FOUND,
-            );
+            throw $this->exceptionFactory->createConcreteProductPricesNotFoundException();
         }
 
         $priceProductTransfers = $this->priceProductStorageClient->getResolvedPriceProductConcreteTransfers(
@@ -72,12 +76,7 @@ class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
             (int)($productConcreteData[static::KEY_ID_PRODUCT_ABSTRACT] ?? 0),
         );
 
-        $filterTransfer = (new PriceProductFilterTransfer())
-            ->setCurrency($this->currencyClient->getCurrent())
-            ->setPriceProductResolveConditions(
-                (new PriceProductResolveConditionsTransfer())->fromArray($productConcreteData, true),
-            );
-
+        $filterTransfer = $this->buildPriceProductFilter($productConcreteData);
         $currentProductPriceTransfer = $this->priceProductClient
             ->resolveProductPriceTransferByPriceProductFilter($priceProductTransfers, $filterTransfer);
 
@@ -92,25 +91,37 @@ class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
     protected function resolveConcreteProductSku(): string
     {
         if (!$this->hasUriVariable(static::URI_VAR_SKU)) {
-            $this->throwMissingConcreteProductSku();
+            throw $this->exceptionFactory->createMissingConcreteProductSkuException();
         }
 
         $sku = (string)$this->getUriVariable(static::URI_VAR_SKU);
 
         if ($sku === '') {
-            $this->throwMissingConcreteProductSku();
+            throw $this->exceptionFactory->createMissingConcreteProductSkuException();
         }
 
         return $sku;
     }
 
-    protected function throwMissingConcreteProductSku(): never
+    /**
+     * @param array<string, mixed> $productConcreteData
+     */
+    protected function buildPriceProductFilter(array $productConcreteData): PriceProductFilterTransfer
     {
-        throw new GlueApiException(
-            Response::HTTP_BAD_REQUEST,
-            ProductsRestApiConfig::RESPONSE_CODE_CONCRETE_PRODUCT_SKU_IS_NOT_SPECIFIED,
-            ProductsRestApiConfig::RESPONSE_DETAIL_CONCRETE_PRODUCT_SKU_IS_NOT_SPECIFIED,
-        );
+        $filterTransfer = (new PriceProductFilterTransfer())
+            ->setPriceProductResolveConditions(
+                (new PriceProductResolveConditionsTransfer())->fromArray($productConcreteData, true),
+            );
+
+        $currencyIsoCode = $this->getRequest()->query->get(static::QUERY_PARAM_CURRENCY);
+
+        if (!is_string($currencyIsoCode) || !in_array($currencyIsoCode, $this->currencyClient->getCurrencyIsoCodes(), true)) {
+            return $filterTransfer->setCurrency($this->currencyClient->getCurrent());
+        }
+
+        return $filterTransfer
+            ->setCurrency($this->currencyClient->fromIsoCode($currencyIsoCode))
+            ->setCurrencyIsoCode($currencyIsoCode);
     }
 
     /**
@@ -118,23 +129,32 @@ class ConcreteProductPricesStorefrontProvider extends AbstractStorefrontProvider
      */
     protected function buildPricesArray(CurrentProductPriceTransfer $currentProductPriceTransfer): array
     {
-        $currency = $currentProductPriceTransfer->getCurrency();
-        $currencyData = $currency !== null ? [
-            'code' => $currency->getCode(),
-            'name' => $currency->getName(),
-            'symbol' => $currency->getSymbol(),
-        ] : null;
-
         $isGross = $this->priceClient->getCurrentPriceMode() === $this->priceClient->getGrossPriceModeIdentifier();
-        $prices = [];
+        $isNet = $this->priceClient->getCurrentPriceMode() === $this->priceClient->getNetPriceModeIdentifier();
 
+        $prices = [];
         foreach ($currentProductPriceTransfer->getPrices() as $priceType => $amount) {
-            $prices[] = [
-                'priceTypeName' => $priceType,
-                'netAmount' => $isGross ? null : $amount,
-                'grossAmount' => $isGross ? $amount : null,
-                'currency' => $currencyData,
-            ];
+            $restProductPriceAttributesTransfer = (new RestProductPriceAttributesTransfer())
+                ->setPriceTypeName($priceType)
+                ->setCurrency(
+                    (new RestCurrencyTransfer())->fromArray($currentProductPriceTransfer->getCurrencyOrFail()->toArray(), true),
+                );
+
+            if ($isGross) {
+                $restProductPriceAttributesTransfer->setGrossAmount($amount);
+            }
+            if ($isNet) {
+                $restProductPriceAttributesTransfer->setNetAmount($amount);
+            }
+
+            foreach ($this->restProductPricesAttributesMapperPlugins as $plugin) {
+                $restProductPriceAttributesTransfer = $plugin->map(
+                    $currentProductPriceTransfer,
+                    $restProductPriceAttributesTransfer,
+                );
+            }
+
+            $prices[] = $restProductPriceAttributesTransfer->toArray(true, true);
         }
 
         return $prices;

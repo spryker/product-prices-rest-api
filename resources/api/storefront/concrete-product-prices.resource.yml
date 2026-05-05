@@ -19,9 +19,14 @@ resource:
                       - concreteProductSku
 
         - type: GetCollection
-          name: getConcreteProductPricesFallbackMissingSku
+          name: getConcreteProductPricesMissingSku
           uriTemplate: '/concrete-products/concrete-product-prices'
-          description: 'Backward compatibility — returns 400 when concrete product SKU is missing'
+          description: 'Returns 400 when concrete product SKU is missing in the path.'
+
+        - type: GetCollection
+          name: getConcreteProductPricesBare
+          uriTemplate: '/concrete-product-prices'
+          description: 'Returns 400 when called without the concrete product SKU prefix.'
 
     includableIn:
         - resource: ConcreteProducts

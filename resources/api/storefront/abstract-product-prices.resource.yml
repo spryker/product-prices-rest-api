@@ -19,9 +19,14 @@ resource:
                       - abstractProductSku
 
         - type: GetCollection
-          name: getAbstractProductPricesFallbackMissingSku
+          name: getAbstractProductPricesMissingSku
           uriTemplate: '/abstract-products/abstract-product-prices'
-          description: 'Backward compatibility — returns 400 when abstract product SKU is missing'
+          description: 'Returns 400 when abstract product SKU is missing in the path.'
+
+        - type: GetCollection
+          name: getAbstractProductPricesBare
+          uriTemplate: '/abstract-product-prices'
+          description: 'Returns 400 when called without the abstract product SKU prefix.'
 
     includableIn:
         - resource: AbstractProducts

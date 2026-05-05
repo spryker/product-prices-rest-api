@@ -12,16 +12,16 @@ namespace Spryker\Glue\ProductPricesRestApi\Api\Storefront\Provider;
 use Generated\Api\Storefront\AbstractProductPricesStorefrontResource;
 use Generated\Shared\Transfer\CurrentProductPriceTransfer;
 use Generated\Shared\Transfer\PriceProductFilterTransfer;
-use Spryker\ApiPlatform\Exception\GlueApiException;
+use Generated\Shared\Transfer\RestCurrencyTransfer;
+use Generated\Shared\Transfer\RestProductPriceAttributesTransfer;
 use Spryker\ApiPlatform\State\Provider\AbstractStorefrontProvider;
 use Spryker\Client\Currency\CurrencyClientInterface;
 use Spryker\Client\Price\PriceClientInterface;
 use Spryker\Client\PriceProduct\PriceProductClientInterface;
 use Spryker\Client\PriceProductStorage\PriceProductStorageClientInterface;
 use Spryker\Client\ProductStorage\ProductStorageClientInterface;
-use Spryker\Glue\ProductPricesRestApi\ProductPricesRestApiConfig;
-use Spryker\Glue\ProductsRestApi\ProductsRestApiConfig;
-use Symfony\Component\HttpFoundation\Response;
+use Spryker\Glue\ProductPricesRestApi\Api\Storefront\Exception\ProductPricesExceptionFactory;
+use Spryker\Service\Container\Attributes\Plugins;
 
 class AbstractProductPricesStorefrontProvider extends AbstractStorefrontProvider
 {
@@ -31,12 +31,20 @@ class AbstractProductPricesStorefrontProvider extends AbstractStorefrontProvider
 
     protected const string URI_VAR_SKU = 'abstractProductSku';
 
+    protected const string QUERY_PARAM_CURRENCY = 'currency';
+
+    /**
+     * @param array<\Spryker\Glue\ProductPricesRestApiExtension\Dependency\Plugin\RestProductPricesAttributesMapperPluginInterface> $restProductPricesAttributesMapperPlugins
+     */
     public function __construct(
         protected ProductStorageClientInterface $productStorageClient,
         protected PriceProductStorageClientInterface $priceProductStorageClient,
         protected PriceProductClientInterface $priceProductClient,
         protected PriceClientInterface $priceClient,
         protected CurrencyClientInterface $currencyClient,
+        protected ProductPricesExceptionFactory $exceptionFactory = new ProductPricesExceptionFactory(),
+        #[Plugins(dependencyProviderMethod: 'getRestProductPricesAttributesMapperPlugins')]
+        protected array $restProductPricesAttributesMapperPlugins = [],
     ) {
     }
 
@@ -57,20 +65,15 @@ class AbstractProductPricesStorefrontProvider extends AbstractStorefrontProvider
         );
 
         if ($productAbstractData === null) {
-            throw new GlueApiException(
-                Response::HTTP_NOT_FOUND,
-                ProductPricesRestApiConfig::RESPONSE_CODE_ABSTRACT_PRODUCT_PRICES_NOT_FOUND,
-                ProductPricesRestApiConfig::RESPONSE_DETAILS_ABSTRACT_PRODUCT_PRICES_NOT_FOUND,
-            );
+            throw $this->exceptionFactory->createAbstractProductPricesNotFoundException();
         }
 
         $priceProductTransfers = $this->priceProductStorageClient->getPriceProductAbstractTransfers(
             (int)($productAbstractData[static::KEY_ID_PRODUCT_ABSTRACT] ?? 0),
         );
 
-        $filterTransfer = (new PriceProductFilterTransfer())->setCurrency($this->currencyClient->getCurrent());
         $currentProductPriceTransfer = $this->priceProductClient
-            ->resolveProductPriceTransferByPriceProductFilter($priceProductTransfers, $filterTransfer);
+            ->resolveProductPriceTransferByPriceProductFilter($priceProductTransfers, $this->buildPriceProductFilter());
 
         $resource = new AbstractProductPricesStorefrontResource();
         $resource->abstractProductSku = $sku;
@@ -83,25 +86,30 @@ class AbstractProductPricesStorefrontProvider extends AbstractStorefrontProvider
     protected function resolveAbstractProductSku(): string
     {
         if (!$this->hasUriVariable(static::URI_VAR_SKU)) {
-            $this->throwMissingAbstractProductSku();
+            throw $this->exceptionFactory->createMissingAbstractProductSkuException();
         }
 
         $sku = (string)$this->getUriVariable(static::URI_VAR_SKU);
 
         if ($sku === '') {
-            $this->throwMissingAbstractProductSku();
+            throw $this->exceptionFactory->createMissingAbstractProductSkuException();
         }
 
         return $sku;
     }
 
-    protected function throwMissingAbstractProductSku(): never
+    protected function buildPriceProductFilter(): PriceProductFilterTransfer
     {
-        throw new GlueApiException(
-            Response::HTTP_BAD_REQUEST,
-            ProductsRestApiConfig::RESPONSE_CODE_ABSTRACT_PRODUCT_SKU_IS_NOT_SPECIFIED,
-            ProductsRestApiConfig::RESPONSE_DETAIL_ABSTRACT_PRODUCT_SKU_IS_NOT_SPECIFIED,
-        );
+        $filterTransfer = new PriceProductFilterTransfer();
+        $currencyIsoCode = $this->getRequest()->query->get(static::QUERY_PARAM_CURRENCY);
+
+        if (!is_string($currencyIsoCode) || !in_array($currencyIsoCode, $this->currencyClient->getCurrencyIsoCodes(), true)) {
+            return $filterTransfer->setCurrency($this->currencyClient->getCurrent());
+        }
+
+        return $filterTransfer
+            ->setCurrency($this->currencyClient->fromIsoCode($currencyIsoCode))
+            ->setCurrencyIsoCode($currencyIsoCode);
     }
 
     /**
@@ -109,23 +117,32 @@ class AbstractProductPricesStorefrontProvider extends AbstractStorefrontProvider
      */
     protected function buildPricesArray(CurrentProductPriceTransfer $currentProductPriceTransfer): array
     {
-        $currency = $currentProductPriceTransfer->getCurrency();
-        $currencyData = $currency !== null ? [
-            'code' => $currency->getCode(),
-            'name' => $currency->getName(),
-            'symbol' => $currency->getSymbol(),
-        ] : null;
-
         $isGross = $this->priceClient->getCurrentPriceMode() === $this->priceClient->getGrossPriceModeIdentifier();
-        $prices = [];
+        $isNet = $this->priceClient->getCurrentPriceMode() === $this->priceClient->getNetPriceModeIdentifier();
 
+        $prices = [];
         foreach ($currentProductPriceTransfer->getPrices() as $priceType => $amount) {
-            $prices[] = [
-                'priceTypeName' => $priceType,
-                'netAmount' => $isGross ? null : $amount,
-                'grossAmount' => $isGross ? $amount : null,
-                'currency' => $currencyData,
-            ];
+            $restProductPriceAttributesTransfer = (new RestProductPriceAttributesTransfer())
+                ->setPriceTypeName($priceType)
+                ->setCurrency(
+                    (new RestCurrencyTransfer())->fromArray($currentProductPriceTransfer->getCurrencyOrFail()->toArray(), true),
+                );
+
+            if ($isGross) {
+                $restProductPriceAttributesTransfer->setGrossAmount($amount);
+            }
+            if ($isNet) {
+                $restProductPriceAttributesTransfer->setNetAmount($amount);
+            }
+
+            foreach ($this->restProductPricesAttributesMapperPlugins as $plugin) {
+                $restProductPriceAttributesTransfer = $plugin->map(
+                    $currentProductPriceTransfer,
+                    $restProductPriceAttributesTransfer,
+                );
+            }
+
+            $prices[] = $restProductPriceAttributesTransfer->toArray(true, true);
         }
 
         return $prices;
