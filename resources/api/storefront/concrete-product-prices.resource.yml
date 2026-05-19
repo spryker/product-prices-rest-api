@@ -7,6 +7,8 @@ resource:
 
     paginationEnabled: false
 
+    security: "is_granted('CUSTOMER_ACCESS')"
+
     operations:
         - type: GetCollection
           name: getConcreteProductPricesByProductConcreteSku
