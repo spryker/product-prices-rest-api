@@ -30,12 +30,6 @@ resource:
           uriTemplate: '/concrete-product-prices'
           description: 'Returns 400 when called without the concrete product SKU prefix.'
 
-    includableIn:
-        - resource: ConcreteProducts
-          relationshipName: concrete-product-prices
-          uriVariableMappings:
-              sku: concreteProductSku
-
     properties:
         concreteProductSku:
             type: string

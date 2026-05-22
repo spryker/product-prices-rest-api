@@ -30,12 +30,6 @@ resource:
           uriTemplate: '/abstract-product-prices'
           description: 'Returns 400 when called without the abstract product SKU prefix.'
 
-    includableIn:
-        - resource: AbstractProducts
-          relationshipName: abstract-product-prices
-          uriVariableMappings:
-              sku: abstractProductSku
-
     properties:
         abstractProductSku:
             type: string
