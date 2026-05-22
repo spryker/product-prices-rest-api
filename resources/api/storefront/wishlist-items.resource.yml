@@ -1,0 +1,20 @@
+resource:
+    name: WishlistItems
+    shortName: wishlist-items
+
+    properties:
+        prices:
+            type: array
+            writable: false
+            readable: true
+            required: false
+            description: 'A collection of prices for the wishlist item.'
+            openapiContext:
+                example:
+                    - priceTypeName: DEFAULT
+                      netAmount: 999
+                      grossAmount: 1099
+                      currency:
+                          code: EUR
+                          name: Euro
+                          symbol: '€'
