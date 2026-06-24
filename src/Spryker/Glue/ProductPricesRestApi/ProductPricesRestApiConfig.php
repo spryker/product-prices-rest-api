@@ -17,61 +17,85 @@ class ProductPricesRestApiConfig extends AbstractBundleConfig
     protected const PERMISSION_CHECK_ENABLED = false;
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESOURCE_ABSTRACT_PRODUCT_PRICES = 'abstract-product-prices';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESOURCE_CONCRETE_PRODUCT_PRICES = 'concrete-product-prices';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const REQUEST_PARAMETER_CURRENCY = 'currency';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const REQUEST_PARAMETER_PRICE_MODE = 'priceMode';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_CODE_ABSTRACT_PRODUCT_PRICES_NOT_FOUND = '307';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_DETAILS_ABSTRACT_PRODUCT_PRICES_NOT_FOUND = 'Can`t find abstract product prices.';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_CODE_CONCRETE_PRODUCT_PRICES_NOT_FOUND = '308';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_DETAILS_CONCRETE_PRODUCT_PRICES_NOT_FOUND = 'Can`t find concrete product prices.';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_CODE_INVALID_CURRENCY = '313';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_DETAILS_INVALID_CURRENCY = 'Currency is invalid.';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_CODE_INVALID_PRICE_MODE = '314';
 
     /**
+     * @api
+     *
      * @var string
      */
     public const RESPONSE_DETAILS_INVALID_PRICE_MODE = 'Price mode is invalid.';
