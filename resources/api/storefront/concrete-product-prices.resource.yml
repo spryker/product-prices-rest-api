@@ -19,16 +19,30 @@ resource:
                   fromClass: ConcreteProductPricesStorefrontResource
                   identifiers:
                       - concreteProductSku
+          openapiContext:
+              responses:
+                  200:
+                      description: 'Prices of the concrete product returned.'
+                  404:
+                      description: 'No concrete product exists for the given SKU.'
 
         - type: GetCollection
           name: getConcreteProductPricesMissingSku
           uriTemplate: '/concrete-products/concrete-product-prices'
           description: 'Returns 400 when concrete product SKU is missing in the path.'
+          openapiContext:
+              responses:
+                  400:
+                      description: 'Concrete product SKU is missing from the request.'
 
         - type: GetCollection
           name: getConcreteProductPricesBare
           uriTemplate: '/concrete-product-prices'
           description: 'Returns 400 when called without the concrete product SKU prefix.'
+          openapiContext:
+              responses:
+                  400:
+                      description: 'Concrete product SKU is missing from the request.'
 
     properties:
         concreteProductSku:

@@ -19,16 +19,30 @@ resource:
                   fromClass: AbstractProductPricesStorefrontResource
                   identifiers:
                       - abstractProductSku
+          openapiContext:
+              responses:
+                  200:
+                      description: 'Prices of the abstract product returned.'
+                  404:
+                      description: 'No abstract product exists for the given SKU.'
 
         - type: GetCollection
           name: getAbstractProductPricesMissingSku
           uriTemplate: '/abstract-products/abstract-product-prices'
           description: 'Returns 400 when abstract product SKU is missing in the path.'
+          openapiContext:
+              responses:
+                  400:
+                      description: 'Abstract product SKU is missing from the request.'
 
         - type: GetCollection
           name: getAbstractProductPricesBare
           uriTemplate: '/abstract-product-prices'
           description: 'Returns 400 when called without the abstract product SKU prefix.'
+          openapiContext:
+              responses:
+                  400:
+                      description: 'Abstract product SKU is missing from the request.'
 
     properties:
         abstractProductSku:
