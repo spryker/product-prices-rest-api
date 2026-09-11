@@ -20,6 +20,14 @@ resource:
                   identifiers:
                       - concreteProductSku
           openapiContext:
+              parameters:
+                  - name: 'currency'
+                    in: query
+                    required: false
+                    description: 'ISO code of the currency to return prices in. Defaults to the default currency of the current store.'
+                    schema:
+                        type: string
+                    example: 'EUR'
               responses:
                   200:
                       description: 'Prices of the concrete product returned.'
@@ -29,6 +37,7 @@ resource:
         - type: GetCollection
           name: getConcreteProductPricesMissingSku
           uriTemplate: '/concrete-products/concrete-product-prices'
+          openapi: false
           description: 'Returns 400 when concrete product SKU is missing in the path.'
           openapiContext:
               responses:
@@ -38,6 +47,7 @@ resource:
         - type: GetCollection
           name: getConcreteProductPricesBare
           uriTemplate: '/concrete-product-prices'
+          openapi: false
           description: 'Returns 400 when called without the concrete product SKU prefix.'
           openapiContext:
               responses:

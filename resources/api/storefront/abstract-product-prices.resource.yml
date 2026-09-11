@@ -20,6 +20,14 @@ resource:
                   identifiers:
                       - abstractProductSku
           openapiContext:
+              parameters:
+                  - name: 'currency'
+                    in: query
+                    required: false
+                    description: 'ISO code of the currency to return prices in. Defaults to the default currency of the current store.'
+                    schema:
+                        type: string
+                    example: 'EUR'
               responses:
                   200:
                       description: 'Prices of the abstract product returned.'
@@ -29,6 +37,7 @@ resource:
         - type: GetCollection
           name: getAbstractProductPricesMissingSku
           uriTemplate: '/abstract-products/abstract-product-prices'
+          openapi: false
           description: 'Returns 400 when abstract product SKU is missing in the path.'
           openapiContext:
               responses:
@@ -38,6 +47,7 @@ resource:
         - type: GetCollection
           name: getAbstractProductPricesBare
           uriTemplate: '/abstract-product-prices'
+          openapi: false
           description: 'Returns 400 when called without the abstract product SKU prefix.'
           openapiContext:
               responses:
