@@ -14,6 +14,9 @@ resource:
           name: getConcreteProductPricesByProductConcreteSku
           uriTemplate: /concrete-products/{concreteProductSku}/concrete-product-prices
           description: 'Retrieve prices of a concrete product'
+          extraProperties:
+              notFoundCode: '308'
+              notFoundMessage: 'Can`t find concrete product prices.'
           uriVariables:
               concreteProductSku:
                   fromClass: ConcreteProductPricesStorefrontResource
