@@ -80,8 +80,16 @@ class ProductPricesMapper implements ProductPricesMapperInterface
         RestWishlistItemsAttributesTransfer $restWishlistItemsAttributesTransfer
     ): RestWishlistItemsAttributesTransfer {
         $restPriceProductTransfers = new ArrayObject();
+        $mappedPriceKeys = [];
 
         foreach ($wishlistItemTransfer->getPrices() as $priceProductTransfer) {
+            $priceKey = (string)json_encode($priceProductTransfer->toArray());
+
+            if (isset($mappedPriceKeys[$priceKey])) {
+                continue;
+            }
+
+            $mappedPriceKeys[$priceKey] = true;
 
             /** @var \Generated\Shared\Transfer\MoneyValueTransfer $moneyValueTransfer */
             $moneyValueTransfer = $priceProductTransfer->getMoneyValue();
